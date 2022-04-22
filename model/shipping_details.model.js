@@ -24,9 +24,21 @@ Shipping.addShippingDetails = (data, result) => {
 
 Shipping.getShippingDetailsByParcelId = function (parcel_id, result) {
 
-    sql.select('*').where(`p.parcel_id = '${parcel_id}'`)
+    const select = [
+      'p.id as product_id',
+      'sd.parcel_id',
+      'p.name',
+      'sp.quantity',
+      'sp.shipping_fee',
+      'sp.total'
+    ]
+
+    sql.select(select)
+    .join('shipping_products sp', 'sp.shipping_details_id = sd.id', 'left')
+    .join('products p', 'p.id = sp.product_id', 'left')
+    .where(`sd.parcel_id = '${parcel_id}'`)
    
-    sql.get('shipping_details p', (err, res) => {
+    sql.get('shipping_details sd', (err, res) => {
       if (err) {
         result(err, null)
       } else {
@@ -39,7 +51,7 @@ Shipping.getShippingDetailsByParcelId = function (parcel_id, result) {
 Shipping.getShippingDetails = function (undefined, result) {
 
     sql.select('*')
-   
+
     sql.get('shipping_details p', (err, res) => {
       if (err) {
         result(err, null)

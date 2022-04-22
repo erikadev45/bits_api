@@ -26,15 +26,41 @@ Parcel.addParcel = (data, result) => {
 
 Parcel.getParcelByReferenceNumber = function (referenceNo, result) {
 
-    sql.select('*').where(`p.reference_number = '${referenceNo}'`)
-   
-    sql.get('parcels p', (err, res) => {
-      if (err) {
-        result(err, null)
-      } else {
-        result(null, res)
-      }
-    })
+  const select = [
+    'p.id as parcel_id',
+    'p.reference_number',
+    'p.sender_name',
+    'p.sender_address',
+    'p.sender_contact',
+    'p.receiver_name',
+    'p.receiver_address',
+    'p.receiver_contact',
+    'p.status',
+    'bpr.name as branch_processed',
+    'bpr.address as branch_processed_address',
+    'bpr.contact_number as branch_processed_contact_number',
+    'bpi.name as branch_pickup',
+    'bpi.address as branch_pickup_address',
+    'bpi.contact_number as branch_pickup_contact_number',
+    'sd.id as shipping_details_id',
+    'sd.date_shipped',
+    'sd.date_received',
+    'sd.type'
+  ]
+
+  sql.select(select)
+    .join('shipping_details sd', 'p.id = sd.parcel_id', 'left')
+    .join('branches bpr', 'bpr.id = sd.branch_processed', 'left')
+    .join('branches bpi', 'bpi.id = sd.branch_pickup', 'left')
+    .where(`p.reference_number = '${referenceNo}'`)
+ 
+  sql.get('parcels p', (err, res) => {
+    if (err) {
+      result(err, null)
+    } else {
+      result(null, res)
+    }
+  })
 }
 
 Parcel.getParcelById = function (id, result) {
@@ -92,6 +118,8 @@ Parcel.getParcels = function (undefined, result) {
 
     sql.select(select)
       .join('shipping_details sd', 'p.id = sd.parcel_id', 'left')
+
+    sql.group_by("p.id")
    
     sql.get('parcels p', (err, res) => {
       if (err) {

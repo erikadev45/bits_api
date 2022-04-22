@@ -12,7 +12,7 @@ module.exports.msg = function (code) {
       "MSG009": "Account already exist with same Email.",
       "MSG010": "dur profile updated successfully.",
       "MSG011": "The email address that you've entered doesn't match any account",
-      "MSG012": "Record updated successfully!",
+      "MSG012": "Record added successfully!",
       "MSG013": "Image should be PNG | JPG | JPEG Format.",
       "MSG014": "File uploaded successfully.",
       "MSG015": "Record deleted successfully.",

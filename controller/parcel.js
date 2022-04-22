@@ -1,6 +1,7 @@
 
 const Parcel = require('../model/parcels.model')
 const Shipping = require('../model/shipping_details.model')
+const ShippingProducts = require('../model/shipping_products.model')
 const { msg } = require('../helper/msg')
 const Common = require('../model/common.model');
 const { generateReferenceNumber } = require('../helper/helper');
@@ -54,7 +55,29 @@ module.exports.addParcel = (req, res) => {
                         if (err1) {
                             res.status(500).json({ "status": false, "message": msg('MSG001'), "error": err1 });
                         }else {
-                            res.status(200).json({ "status": true, "message": msg("MSG024"), data: res2})
+                            if (formData.products) {
+                                console.log('Products', formData.products)
+                                formData.products.forEach((product, i) => {
+                                    var shipping_products_data = {
+                                        shipping_details_id : res2.insertId,
+                                        product_id : product.id,
+                                        total: product.total,
+                                        shipping_fee: product.shipping_fee,
+                                        quantity: product.quantity
+                                    }
+                                    ShippingProducts.addShippingProduct(shipping_products_data, (err3, res3) => {
+                                        if (err3) {
+                                            res.status(500).json({ "status": false, "message": msg('MSG001'), "error": err3 });
+                                        } else {
+                                            if (i === formData.products.length - 1) {
+                                                res.status(200).json({ "status": true, "message": msg("MSG024"), data: res2})
+                                            }
+                                        }
+                                    })
+                                });
+                            } else {
+                                res.status(200).json({ "status": true, "message": msg("MSG024"), data: res2})
+                            }
                         }
                     })
                 }

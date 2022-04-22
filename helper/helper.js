@@ -70,6 +70,6 @@ module.exports.getRandomPassword = function (length = 8) {
 }
 
 module.exports.generateReferenceNumber = () => {
-    return `BT ${Math.random().toString(36).substring(2,30).toUpperCase()}`
+    return `BT-${Math.random().toString(36).substring(2,30).toUpperCase()}`
 }
 

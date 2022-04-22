@@ -1,17 +1,15 @@
 
-const Shipping = require('../model/shipping_details.model')
+const Rate = require('../model/rating.model')
 const { msg } = require('../helper/msg')
-const Common = require('../model/common.model');
 
-module.exports.addShippingDetails = (req, res) => {
+module.exports.addRate = (req, res) => {
     let formData = req.body;
     let requestData = {
-        "parcel_id": "required",
-        "branch_pickup": "required",
-        "branch_processed": "required",
-        "date_shipped": "required",
-        "type": "type",
-        "status": "required"
+        "fullname": "required",
+        "address": "required",
+        "contact": "required",
+        "rate": "required",
+        "message": "required"
     };
     var validateData = new node_validator(formData, requestData);
     validateData.check().then((matched) => {
@@ -23,28 +21,25 @@ module.exports.addShippingDetails = (req, res) => {
             });
         } else {
             var data = {
-                parcel_id: formData.parcel_id,
-                branch_pickup: formData.branch_pickup,
-                branch_processed: formData.branch_processed,
-                date_shipped: formData.date_shipped,
-                date_received: null,
-                type: formData.type,
-                status: formData.status
+                fullname: formData.fullname,
+                address: formData.address,
+                contact: formData.contact,
+                rate: formData.rate,
+                message: formData.message
             };
-
-            Shipping.addShippingDetails(data, (err1, res1) => {
+            Rate.addRate(data, (err1, res1) => {
                 if (err1) {
-                    return res.status(200).json({ "status": false, "message": msg('MSG001'), "error": err1 });
-                }else {
-                    return 'success'
+                    res.status(200).json({ "status": false, "message": msg('MSG001'), "error": err1 });
+                } else {
+                    res.status(200).json({ "status": true, "message": msg("MSG012") });
                 }
             })
         }
     })
 }
 
-module.exports.getShippingDetails = function(req, res) {
-    Shipping.getShippingDetails(undefined, (err2, result) => {
+module.exports.getRatings = function(req, res) {
+    Rate.getRatings(undefined, (err2, result) => {
         if (err2)
             res.status(200).json({
                 "status": false,
@@ -69,12 +64,12 @@ module.exports.getShippingDetails = function(req, res) {
     })
 }
 
-module.exports.getShippingDetailsByParcelId = function(req, res) {
+module.exports.getRatingById = function(req, res) {
     let formData = req.body;
-    let loginSchema = {
-        "parcel_id": "required",
+    let schema = {
+        "id": "required",
     };
-    var validateData = new node_validator(formData, loginSchema);
+    var validateData = new node_validator(formData, schema);
     validateData.check().then((matched) => {
         if (!matched) {
             res.status(200).json({
@@ -83,8 +78,8 @@ module.exports.getShippingDetailsByParcelId = function(req, res) {
                 "error": validateData.errors
             });
         } else {
-            let parcel_id = formData.parcel_id
-            Shipping.getShippingDetailsByParcelId(parcel_id, (err2, result) => {
+            let id = formData.id
+            Rate.getRateById(id, (err2, result) => {
                 if (err2)
                     res.status(200).json({
                         "status": false,
@@ -111,52 +106,10 @@ module.exports.getShippingDetailsByParcelId = function(req, res) {
     })
 }
 
-module.exports.updateShippingDetailsByParcelId = function (req, res) {
-    let formData = req.body;
-    let parcel_id = formData.parcel_id
-    let requestData = {
-        "name": "required",
-        "shipping_fee": "required",
-        "type": "required",
-        "size": "required"
-    };
-    var validateData = new node_validator(formData, requestData);
-    validateData.check().then((matched) => {
-        if (!matched) {
-            res.status(200).json({
-                "status": false,
-                "message": msg('MSG001'),
-                "error": validateData.errors
-            });
-        } else {
-            var postData = {
-                name: formData.name,
-                shipping_fee: formData.shipping_fee,
-                type: formData.type,
-                size: formData.size,
-                updated_on: new Date
-            }
-            let where = { id: parcel_id }
-            Common.updateRecord('shipping_details', postData, where, (err, data) => {
-                if (err) {
-                    res.status(200).json({
-                        "status": false,
-                        "message": msg('MSG002'),
-                        "error": err
-                    });
-                }
-                else {
-                    res.json({ "status": true, "message": msg('MSG012'), data: {} });
-                }
-            });
-        }
-    })
-}
-
-module.exports.deleteByParcelId = function (req, res) {
+module.exports.deleteRatingById = function (req, res) {
     let data = req.body;
     let Schema = {
-      "parcel_id": "required"
+      "id": "required",
     };
     var validateData = new node_validator(data, Schema);
     validateData.check().then((matched) => {
@@ -167,7 +120,7 @@ module.exports.deleteByParcelId = function (req, res) {
           error: validateData.errors,
         });
       } else {
-          Shipping.deleteByParcelId(data.parcel_id, (err1, res1) => {
+          Rate.deleteById(data.id, (err1, res1) => {
           if (err1) {
             res.status(200).json({
               status: false,
@@ -178,7 +131,7 @@ module.exports.deleteByParcelId = function (req, res) {
             if (res1 == "1") {
               res.status(200).json({
                 status: true,
-                message: "Product Item deleted Successfully",
+                message: "Rate deleted Successfully",
               });
             } else {
               res.status(200).json({

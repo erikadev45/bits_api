@@ -83,9 +83,33 @@ CREATE TABLE `shipping_products` (
   `id` bigint NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `shipping_details_id` bigint NOT NULL,
   `product_id` bigint NOT NULL,
+  `quantity` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `shipping_fee` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `total` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_on` datetime DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+
+-- ratings table
+DROP TABLE IF EXISTS `ratings`;
+CREATE TABLE `ratings` (
+  `id` bigint NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `fullname` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `address` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `contact` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `rate` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `message` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_on` datetime DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- reports table
+DROP TABLE IF EXISTS `reports`;
+CREATE TABLE `reports` (
+  `id` bigint NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `parcel_id` bigint NOT NULL,
+  `shipping_details_id` bigint NOT NULL,
+  `created_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_on` datetime DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
