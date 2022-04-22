@@ -10,5 +10,6 @@ router.get('/', ParcelController.getParcels);
 router.post('/get-parcel-by-ref', ParcelController.getParcelByReferenceNumber);
 router.post('/get-parcel-by-id', ParcelController.getParcelById);
 router.post('/update', ParcelController.updateParcel);
+router.post('/delete-parcel-product', ParcelController.deleteParcelProductById);
 
 module.exports = router;

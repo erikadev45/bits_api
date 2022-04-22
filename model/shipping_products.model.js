@@ -47,6 +47,23 @@ ShippingProducts.getShippingProducts = function (undefined, result) {
     })
 }
 
+ShippingProducts.deleteById = function (id, result) {
+  var where = {
+    id: id,
+  };
+  sql.delete("shipping_products", where, (err1, res1) => {
+    if (err1) {
+      result(err1, null);
+    } else {
+      if (res1.affectedRows > 0) {
+        result(null, 1);
+      } else {
+        result(null, null);
+      }
+    }
+  });
+};
+
 ShippingProducts.deleteByShippingId = function (shipping_details_id, result) {
   var where = {
     shipping_details_id: shipping_details_id,

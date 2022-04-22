@@ -55,7 +55,7 @@ module.exports.addParcel = (req, res) => {
                         if (err1) {
                             res.status(500).json({ "status": false, "message": msg('MSG001'), "error": err1 });
                         }else {
-                            if (formData.products) {
+                            if (formData.products?.length > 0) {
                                 console.log('Products', formData.products)
                                 formData.products.forEach((product, i) => {
                                     var shipping_products_data = {
@@ -260,7 +260,45 @@ module.exports.updateParcel = function (req, res) {
                             });
                         }
                         else {
-                            res.json({ "status": true, "message": msg('MSG012'), data: {} });
+
+                            if (formData.products?.length > 0) {
+                                formData.products.forEach((product, i) => {
+                                    if (product.shipping_product_id) {
+                                        var shipping_products_data_update = {
+                                            total: product.total,
+                                            shipping_fee: product.shipping_fee,
+                                            quantity: product.quantity
+                                        }
+                                        let where = { id: product.shipping_product_id }
+                                        Common.updateRecord('shipping_products', shipping_products_data_update, where, (err3, res3) => {
+                                            if (err3) {
+                                                res.status(500).json({ "status": false, "message": msg('MSG001'), "error": err3 });
+                                            } else {
+                                                if (i === formData.products.length - 1) {
+                                                    return res.status(200).json({ "status": true, "message": msg("MSG024"), data: res3 })
+                                                }
+                                            }
+                                        })
+                                    } else {
+                                        var shipping_products_data_new = {
+                                            shipping_details_id : formData.shipping_details_id,
+                                            product_id : product.id,
+                                            total: product.total,
+                                            shipping_fee: product.shipping_fee,
+                                            quantity: product.quantity
+                                        }
+                                        ShippingProducts.addShippingProduct(shipping_products_data_new, (err4, res4) => {
+                                            if (err4) {
+                                                res.status(500).json({ "status": false, "message": msg('MSG001'), "error": err4 });
+                                            } else {
+                                                if (i === formData.products.length - 1) {
+                                                    res.status(200).json({ "status": true, "message": msg("MSG024"), data: res4})
+                                                }
+                                            }
+                                        })
+                                    }
+                                })
+                            }
                         }
                     });
                 }
@@ -349,6 +387,38 @@ module.exports.deleteParcelById = function (req, res) {
               });
             }
           }
+        });
+      }
+    });
+  };
+
+  module.exports.deleteParcelProductById = function (req, res) {
+    let data = req.body;
+    let Schema = {
+      "shipping_product_id": "required"
+    };
+    var validateData = new node_validator(data, Schema);
+    validateData.check().then((matched) => {
+      if (!matched) {
+        res.status(200).json({
+          status: false,
+          message: msg("MSG001"),
+          error: validateData.errors,
+        });
+      } else {
+        ShippingProducts.deleteById(data.shipping_product_id, (err1, res1) => {
+          if (err1) {
+            res.status(200).json({
+              status: false,
+              message: msg("MSG002"),
+              error: err1,
+            });
+        } else {
+            res.status(200).json({
+                status: true,
+                message: msg("MSG015"),
+            });
+        }
         });
       }
     });

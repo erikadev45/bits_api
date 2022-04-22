@@ -108,16 +108,23 @@ Parcel.getParcels = function (undefined, result) {
       'p.receiver_address',
       'p.receiver_contact',
       'p.status',
+      'b.name as branch_processed_name',
+      'b.schedule as branch_processed_schedule',
+      'b.address as branch_processed_address',
+      'b.municipality as branch_processed_municipality',
+      'b.zipcode as branch_processed_zipcode',
       'sd.id as shipping_details_id',
       'sd.branch_pickup',
       'sd.branch_processed',
       'sd.date_shipped',
       'sd.date_received',
-      'sd.type'
+      'sd.type',
+      'p.created_on'
     ]
 
     sql.select(select)
       .join('shipping_details sd', 'p.id = sd.parcel_id', 'left')
+      .join('branches b', 'b.id = sd.branch_processed', 'left')
 
     sql.group_by("p.id")
    

@@ -25,12 +25,15 @@ Shipping.addShippingDetails = (data, result) => {
 Shipping.getShippingDetailsByParcelId = function (parcel_id, result) {
 
     const select = [
+      'sp.id as shipping_product_id',
+      'p.id',
       'p.id as product_id',
       'sd.parcel_id',
       'p.name',
       'sp.quantity',
       'sp.shipping_fee',
-      'sp.total'
+      'sp.total',
+      'p.type',
     ]
 
     sql.select(select)
