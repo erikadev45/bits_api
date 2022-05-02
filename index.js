@@ -14,6 +14,10 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(express.static('public'))
 
+app.get('/', function(req, res) {
+  res.send('<h1>Connected</h1>');
+})
+
 app.use('/api', apiRoutes);
 
 app.listen(config.port, function(err){
