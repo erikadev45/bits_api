@@ -9,9 +9,8 @@ var allowedOrigins = [
 	"http://localhost:3000",
 	"https://bits.vercel.app",
 	"https://bits-qfwpzo281-erikadev45.vercel.app",
-	"https://bits-iy4xmalco-erikadev45.vercel.app",
 	"https://bits-dev.netlify.app",
-  "https://bits-507kxg0em-erikadev45.vercel.app"
+	"https://bits-507kxg0em-erikadev45.vercel.app"
 ]
 
 app.use(
@@ -38,8 +37,8 @@ app.use(
 	})
 )
 
-app.get('/', function(req, res) {
-  res.send('<h1>Connected</h1>');
+app.get("/", function (req, res) {
+	res.send("<h1>Connected</h1>")
 })
 
 app.use("/api", apiRoutes)
