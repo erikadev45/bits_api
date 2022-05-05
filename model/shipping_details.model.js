@@ -34,6 +34,7 @@ Shipping.getShippingDetailsByParcelId = function (parcel_id, result) {
       'sp.shipping_fee',
       'sp.total',
       'p.type',
+      'p.size'
     ]
 
     sql.select(select)
